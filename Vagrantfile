@@ -11,7 +11,7 @@ sudo gem install fpm
 INSTALL
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = 'Ubuntu'
+  config.vm.box = 'hashicorp/precise64'
   config.vm.provision 'shell', inline: $install
   config.vm.synced_folder '.', '/home/vagrant/src'
   config.berkshelf.enabled = false

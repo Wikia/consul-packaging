@@ -17,6 +17,8 @@ Usage
 -----
 
 ```bash
+vagrant plugin install vagrant-berkshelf
+vagrant box add hashicorp/precise64
 vagrant up
 vagrant ssh
 
@@ -25,3 +27,7 @@ make
 ```
 
 Edit the ``Makefile`` to change the version or architecture of the packages.
+
+Dependencies
+------------
+vagrant-berkshelf depends on the installation of the chef sdk
