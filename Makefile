@@ -33,7 +33,7 @@ dist/consul_${CONSUL_VERSION}-${ITERATION}_${ARCH}.deb: build/consul/usr/sbin/co
 			--name consul --version ${CONSUL_VERSION} --iteration ${ITERATION} \
 			--deb-changelog changes/consul \
 			--deb-default build/consul/etc/default/consul \
-			--deb-upstart build/consul/etc/init/consul \
+			--deb-upstart build/consul/etc/init/consul.conf \
 			--provides consul \
 			--description "Consul is a tool for service discovery, monitoring and configuration" . )
 
