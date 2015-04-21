@@ -82,7 +82,6 @@ dist/consul-template_${TEMPLATE_VERSION}-${ITERATION}_${ARCH}.deb: build/consul-
 			--deb-changelog changes/consul-template \
 			--config-files etc/consul-template.d/00-default.hcl \
 			--deb-default build/consul-template/etc/default/consul-template \
-			--deb-upstart build/consul-template/etc/init/consul-template.conf \
 			--provides consul-template \
 			--exclude /etc/conf/consul-template.conf.conf \
 			--description "Generic template rendering and notifications with Consul" . )
