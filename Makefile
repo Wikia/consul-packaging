@@ -1,10 +1,15 @@
-CONSUL_VERSION=0.5.0
-REPLICATE_VERSION=0.1.0
-TEMPLATE_VERSION=0.8.0
+CONSUL_VERSION=0.5.2
+REPLICATE_VERSION=0.2.0
+TEMPLATE_VERSION=0.9.0
 ENVCONSUL_VERSION=0.5.0
+
+CONSUL_ITERATION=1
+ENVCONSUL_ITERATION=2
+REPLICATE_ITERATION=1
+TEMPLATE_ITERATION=1
+
 PACKAGER="Gavin M. Roy <gavinr@aweber.com>"
 ARCH=amd64
-ITERATION=2
 
 all: consul consul-replicate consul-template consul-webui envconsul
 
@@ -12,32 +17,33 @@ clean:
 	@( rm -rf build/* )
 	@( rm -rf dist/* )
 
-consul: dist/consul_${CONSUL_VERSION}-${ITERATION}_${ARCH}.deb
+consul: dist/consul_${CONSUL_VERSION}-${CONSUL_ITERATION}_${ARCH}.deb
 
-consul-replicate: dist/consul-replicate_${REPLICATE_VERSION}-${ITERATION}_${ARCH}.deb
+consul-replicate: dist/consul-replicate_${REPLICATE_VERSION}-${REPLICATE_ITERATION}_${ARCH}.deb
 
-consul-template: dist/consul-template_${TEMPLATE_VERSION}-${ITERATION}_${ARCH}.deb
+consul-template: dist/consul-template_${TEMPLATE_VERSION}-${TEMPLATE_ITERATION}_${ARCH}.deb
 
-consul-webui: dist/consul-webui_${CONSUL_VERSION}-${ITERATION}_all.deb
+consul-webui: dist/consul-webui_${CONSUL_VERSION}-${CONSUL_ITERATION}_all.deb
 
-envconsul: dist/envconsul_${ENVCONSUL_VERSION}-${ITERATION}_${ARCH}.deb
+envconsul: dist/envconsul_${ENVCONSUL_VERSION}-${ENVCONSUL_ITERATION}_${ARCH}.deb
 
-dist/consul_${CONSUL_VERSION}-${ITERATION}_${ARCH}.deb: build/consul/usr/sbin/consul
+dist/consul_${CONSUL_VERSION}-${CONSUL_ITERATION}_${ARCH}.deb: build/consul/usr/sbin/consul
 	@( mkdir -p dist )
 	@( echo "Building consul ${CONSUL_VERSION} package" )
 	@( mkdir -p build/consul )
 	@( cp -R templates/consul/* build/consul/ )
 	@( fpm -s dir -t deb -m ${PACKAGER} -a ${ARCH} \
 			-C build/consul \
-			--package dist/consul_${CONSUL_VERSION}-${ITERATION}_${ARCH}.deb \
-			--name consul --version ${CONSUL_VERSION} --iteration ${ITERATION} \
+			--package dist/consul_${CONSUL_VERSION}-${CONSUL_ITERATION}_${ARCH}.deb \
+			--name consul --version ${CONSUL_VERSION} --iteration ${CONSUL_ITERATION} \
 			--deb-changelog changes/consul \
+			--category utils \
 			--deb-default build/consul/etc/default/consul \
 			--deb-upstart build/consul/etc/init/consul.conf \
 			--provides consul \
 			--description "Consul is a tool for service discovery, monitoring and configuration" . )
 
-dist/consul-webui_${CONSUL_VERSION}-${ITERATION}_all.deb: build/consul-webui/usr/share/consul-webui
+dist/consul-webui_${CONSUL_VERSION}-${CONSUL_ITERATION}_all.deb: build/consul-webui/usr/share/consul-webui
 	@( mkdir -p dist )
 	@( echo "Building consul-webui ${CONSUL_VERSION} package" )
 	@( mkdir -p build/consul-webui )
@@ -47,19 +53,20 @@ dist/consul-webui_${CONSUL_VERSION}-${ITERATION}_all.deb: build/consul-webui/usr
 			--deb-changelog changes/consul-webui \
 			--depends consul \
 			--category web \
-			--package dist/consul-webui_${CONSUL_VERSION}-${ITERATION}_all.deb \
-			--name consul-webui --version ${CONSUL_VERSION} --iteration ${ITERATION} \
+			--package dist/consul-webui_${CONSUL_VERSION}-${CONSUL_ITERATION}_all.deb \
+			--config-files etc/consul.d/10-webui.json \
+			--name consul-webui --version ${CONSUL_VERSION} --iteration ${CONSUL_ITERATION} \
 			--description "Consul Web UI" . )
 
-dist/consul-replicate_${REPLICATE_VERSION}-${ITERATION}_${ARCH}.deb: build/consul-replicate/usr/sbin/consul-replicate
+dist/consul-replicate_${REPLICATE_VERSION}-${REPLICATE_ITERATION}_${ARCH}.deb: build/consul-replicate/usr/sbin/consul-replicate
 	@( mkdir -p dist )
 	@( echo "Building consul-replicate ${TEMPLATE_VERSION} package" )
 	@( mkdir -p build/consul-replicate )
 	@( cp -R templates/consul-replicate/* build/consul-replicate/ )
 	@( fpm -s dir -t deb -m ${PACKAGER} -a ${ARCH} \
 			-C build/consul-replicate \
-			--package dist/consul-replicate_${REPLICATE_VERSION}-${ITERATION}_${ARCH}.deb \
-			--name consul-replicate --version ${REPLICATE_VERSION} --iteration ${ITERATION} \
+			--package dist/consul-replicate_${REPLICATE_VERSION}-${REPLICATE_ITERATION}_${ARCH}.deb \
+			--name consul-replicate --version ${REPLICATE_VERSION} --iteration ${REPLICATE_ITERATION} \
 			--depends consul \
 			--category utils \
 			--deb-changelog changes/consul-replicate \
@@ -68,15 +75,15 @@ dist/consul-replicate_${REPLICATE_VERSION}-${ITERATION}_${ARCH}.deb: build/consu
 			--provides consul-replicate \
 			--description "Consul cross-DC KV replication daemon" . )
 
-dist/consul-template_${TEMPLATE_VERSION}-${ITERATION}_${ARCH}.deb: build/consul-template/usr/sbin/consul-template
+dist/consul-template_${TEMPLATE_VERSION}-${TEMPLATE_ITERATION}_${ARCH}.deb: build/consul-template/usr/sbin/consul-template
 	@( mkdir -p dist )
 	@( echo "Building consul-template ${TEMPLATE_VERSION} package" )
 	@( mkdir -p build/consul-template )
 	@( cp -R templates/consul-template/* build/consul-template/ )
 	@( fpm -s dir -t deb -m ${PACKAGER} -a ${ARCH} \
 			-C build/consul-template \
-			--name consul-template --version ${TEMPLATE_VERSION} --iteration ${ITERATION} \
-			--package dist/consul-template_${TEMPLATE_VERSION}-${ITERATION}_${ARCH}.deb \
+			--name consul-template --version ${TEMPLATE_VERSION} --iteration ${TEMPLATE_ITERATION} \
+			--package dist/consul-template_${TEMPLATE_VERSION}-${TEMPLATE_ITERATION}_${ARCH}.deb \
 			--depends consul \
 			--category utils \
 			--deb-changelog changes/consul-template \
@@ -86,15 +93,15 @@ dist/consul-template_${TEMPLATE_VERSION}-${ITERATION}_${ARCH}.deb: build/consul-
 			--exclude /etc/conf/consul-template.conf.conf \
 			--description "Generic template rendering and notifications with Consul" . )
 
-dist/envconsul_${ENVCONSUL_VERSION}-${ITERATION}_${ARCH}.deb: build/envconsul/usr/sbin/envconsul
+dist/envconsul_${ENVCONSUL_VERSION}-${ENVCONSUL_ITERATION}_${ARCH}.deb: build/envconsul/usr/sbin/envconsul
 	@( mkdir -p dist )
 	@( echo "Building envconsul ${ENVCONSUL_VERSION} package" )
 	@( mkdir -p build/envconsul )
 	@( cp -R templates/envconsul/* build/envconsul/ )
 	@( fpm -s dir -t deb -m ${PACKAGER} -a ${ARCH} \
 			-C build/envconsul \
-			--package dist/envconsul_${ENVCONSUL_VERSION}-${ITERATION}_${ARCH}.deb \
-			--name envconsul --version ${ENVCONSUL_VERSION} --iteration ${ITERATION} \
+			--package dist/envconsul_${ENVCONSUL_VERSION}-${ENVCONSUL_ITERATION}_${ARCH}.deb \
+			--name envconsul --version ${ENVCONSUL_VERSION} --iteration ${ENVCONSUL_ITERATION} \
 			--deb-changelog changes/envconsul \
 			--depends consul \
 			--category utils \
